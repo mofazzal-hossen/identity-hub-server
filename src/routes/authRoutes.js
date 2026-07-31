@@ -20,6 +20,7 @@ const transporter = nodemailer.createTransport({
 });
 
 const otp = Math.floor(100000 + Math.random() * 900000);
+
 routes.post('/sendOpt', async (req, res) => {
   const { email } = req.body
 
@@ -30,8 +31,22 @@ routes.post('/sendOpt', async (req, res) => {
     });
 
   };
+
   let otp = otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false });
-  console.log(otp)
+  let existingEmail = await User.findOne({ email: email })
+  if (!existingEmail) {
+
+
+    let user = new User({
+      email: email,
+      otp: otp
+
+    }).save()
+
+  } else {
+    await User.findOneAndUpdate({ email: email }, { otp: otp })
+  }
+
 
 
   const info = await transporter.sendMail({
@@ -47,13 +62,35 @@ routes.post('/sendOpt', async (req, res) => {
   `,
   });
 
-  // console.log("Email sent:", info.messageId);
+  console.log("Email sent:", info.messageId);
 
-
+  res.send("otp dan")
 
 
 });
 
+//Login Part
+routes.post('/login/:email', async (req, res) => {
+  const { email } = req.params
+  const { otp } = req.body
+  let existingEmail = await User.findOne({ email: email })
+
+  // console.log(existingEmail.otp)
+   if (!existingEmail.isLogin) {
+    return res.send("before you do logout")
+  }
+  if (!existingEmail.otp) {
+    return res.send("oop")
+  }
+  if (existingEmail.otp == otp) {
+    await User.findOneAndUpdate({email:email},{otp:"", isLogin:true})
+    res.send('login')
+  }else{
+    res.send('otp not matched')
+  }
+
+
+})
 
 export default routes
 

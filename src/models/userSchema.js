@@ -11,13 +11,15 @@ const userSchema = new Schema({
         trim: true,
     },
 
-    userName: {
-        type: String
+    otp: {
+        type: String,
+        required: true,
+        unique: true
     },
-    // otp: {
-    //     type: String,
-    //     default: null,
-    // },
+    isLogin: {
+       type:Boolean,
+       default:false
+    }
 })
 
 const User = mongoose.model("User", userSchema);
