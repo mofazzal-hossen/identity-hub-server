@@ -19,8 +19,6 @@ const transporter = nodemailer.createTransport({
 });
 
 
-
-
 routes.post('/sendOpt',async(req, res)=>{
   const {email}=req.body
 
@@ -30,8 +28,22 @@ routes.post('/sendOpt',async(req, res)=>{
   message:"email is required"
 });
 
-  }
+  };
 
+const info = await transporter.sendMail({
+  from: `"Identity Hub" <${process.env.EMAIL}>`,
+  to: email,
+  subject: "Email Verification OTP",
+  text: `Your OTP is ${otp}`,
+  html: `
+    <h2>Identity Hub</h2>
+    <p>Your verification code is:</p>
+    <h1>${otp}</h1>
+    <p>This code will expire in 5 minutes.</p>
+  `,
+});
+
+console.log("Email sent:", info.messageId);
 
 
 
