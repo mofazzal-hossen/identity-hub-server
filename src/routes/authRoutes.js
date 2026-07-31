@@ -76,7 +76,7 @@ routes.post('/login/:email', async (req, res) => {
   let existingEmail = await User.findOne({ email: email })
 
   // console.log(existingEmail.otp)
-  if (!existingEmail.isLogin) {
+  if (existingEmail.isLogin) {
     return res.send("before you do logout")
   }
   if (!existingEmail.otp) {
@@ -92,6 +92,48 @@ routes.post('/login/:email', async (req, res) => {
 
 })
 
+
+//logout part
+routes.post("/logout/:email", async (req, res) => {
+  try {
+    const { email } = req.params;
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    if (!user.isLogin) {
+      return res.status(400).json({
+        success: false,
+        message: "User is already logged out",
+      });
+    }
+
+    await User.findOneAndUpdate(
+      { email },
+      {
+        isLogin: false,
+        otp: "",
+      }
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Logout successful",
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+});
 export default routes
 
 
