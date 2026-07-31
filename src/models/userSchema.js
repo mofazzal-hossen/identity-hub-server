@@ -14,8 +14,12 @@ const userSchema = new Schema({
     userName: {
         type: String
     },
-    otp: {
-        type: String,
-        default: null,
-    },
+    // otp: {
+    //     type: String,
+    //     default: null,
+    // },
 })
+
+const User = mongoose.model("User", userSchema);
+
+export default User;
