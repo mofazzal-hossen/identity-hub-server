@@ -76,16 +76,16 @@ routes.post('/login/:email', async (req, res) => {
   let existingEmail = await User.findOne({ email: email })
 
   // console.log(existingEmail.otp)
-   if (!existingEmail.isLogin) {
+  if (!existingEmail.isLogin) {
     return res.send("before you do logout")
   }
   if (!existingEmail.otp) {
     return res.send("oop")
   }
   if (existingEmail.otp == otp) {
-    await User.findOneAndUpdate({email:email},{otp:"", isLogin:true})
+    await User.findOneAndUpdate({ email: email }, { otp: "", isLogin: true })
     res.send('login')
-  }else{
+  } else {
     res.send('otp not matched')
   }
 
